@@ -10,9 +10,9 @@ CND_CONF=default
 CND_DISTDIR=dist
 TMPDIR=build/${CND_CONF}/${IMAGE_TYPE}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/lora_gateway_pic24f.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-OUTPUT_BASENAME=lora_gateway_pic24f.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-PACKAGE_TOP_DIR=loragatewaypic24f/
+OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/lixibit_firmware_gateway.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+OUTPUT_BASENAME=lixibit_firmware_gateway.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+PACKAGE_TOP_DIR=lixibitfirmwaregateway/
 
 # Functions
 function checkReturnCode
@@ -57,15 +57,15 @@ mkdir -p ${TMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}/loragatewaypic24f/bin
+makeDirectory ${TMPDIR}/lixibitfirmwaregateway/bin
 copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
 
 # Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/package/loragatewaypic24f.tar
+rm -f ${CND_DISTDIR}/${CND_CONF}/package/lixibitfirmwaregateway.tar
 cd ${TMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/loragatewaypic24f.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/lixibitfirmwaregateway.tar *
 checkReturnCode
 
 # Cleanup

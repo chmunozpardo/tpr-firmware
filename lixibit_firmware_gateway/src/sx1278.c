@@ -29,7 +29,6 @@ unsigned signal_sf = 7;     // Spreading factor in bits
 * Output: None
 *
 ********************************************************************/
-
 void SX1278_init(void){
     
     unsigned char BW_bits;      // Used for configuring the signal bandwidth
@@ -178,7 +177,6 @@ void SX1278_init(void){
 * Output: None
 *
 ********************************************************************/
-
 void SX1278_changeMode(unsigned char mode){
     
     unsigned char byte_read = 0x00;
@@ -193,7 +191,7 @@ void SX1278_changeMode(unsigned char mode){
 /*********************************************************************
 * Function: void SX1278_changeFreq(unsigned char *buf);
 *
-* Overview: Changes de operation mode of the SX1278 radio.
+* Overview: Sets the frequency operation of the radio
 *
 * PreCondition: None
 *
@@ -202,7 +200,6 @@ void SX1278_changeMode(unsigned char mode){
 * Output: None
 *
 ********************************************************************/
-
 void SX1278_changeFreq(unsigned char *buf){
     
     unsigned char *freq_tmp = (unsigned char *)&freq;

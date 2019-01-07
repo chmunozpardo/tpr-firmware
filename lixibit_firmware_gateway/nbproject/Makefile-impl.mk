@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=lora_gateway_pic24f
+PROJECTNAME=lixibit_firmware_gateway
 
 # Active Configuration
 DEFAULTCONF=default

@@ -354,29 +354,6 @@ void ACCEL_init(void){
     ACCEL_write(CLICK_THS, 63);       // 0b00001010
 }
 
-// Interrupt functions
-void RTC_write_int(unsigned char reg, unsigned char buf){
-    
-    I2C1CON0bits.EN = 1;
-    
-    // I2C Write
-    I2C1ADB1 = 0b10100010 + 0x00;
-    I2C1CNT = 2;
-    
-    I2C1CON0bits.S = 1;
-    I2C1TXB = reg;
-    while(!I2C1STAT1bits.TXBE);
-    
-    I2C1TXB = buf;
-    while(!I2C1STAT1bits.TXBE);
-    while(!I2C1PIRbits.PCIF);
-    
-    I2C1PIR = 0;
-    I2C1ERR = 0;
-    
-    I2C1CON0bits.EN = 0;
-}
-
 void SYSTEM_Sleep(unsigned char time){
     //PORTBbits.RB4 = 0;
     if(time == 0)

@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=test_new_pic.X
+PROJECTNAME=lixibit_firmware_node
 
 # Active Configuration
 DEFAULTCONF=default

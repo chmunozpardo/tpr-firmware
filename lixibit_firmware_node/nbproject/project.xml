@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>test_new_pic</name>
+            <name>lixibit_firmware_node</name>
             <creation-uuid>e9947592-8b34-4e57-90b1-c39437c383e5</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>

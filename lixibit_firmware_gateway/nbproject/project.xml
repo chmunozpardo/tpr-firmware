@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>lora_gateway_pic24f</name>
+            <name>lixibit_firmware_gateway</name>
             <creation-uuid>3a52cb8d-76ab-413f-9946-b2e590150417</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>
