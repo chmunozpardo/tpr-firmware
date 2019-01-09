@@ -149,7 +149,7 @@ void APP_DeviceCustomHIDTasks(){
                 }
                 else if(rx_status == 1){
                     unsigned char byte_read = SX1278_readReg(REGIRQFLAGS);
-                    if((byte_read & RXDONE)){
+                    if((byte_read & RXDONE) && !(byte_read & VALIDHEADER)){
                     
                         unsigned char length_rx = 0;
 
