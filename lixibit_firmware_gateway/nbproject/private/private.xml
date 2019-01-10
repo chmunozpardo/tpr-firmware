@@ -3,7 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/lander/Documents/Lixibit/Firmware/lixibit_firmware_gateway/src/sx1278.c</file>
+            <file>file:/home/lander/Documents/Lixibit/Firmware/lixibit_firmware_gateway/inc/sx1278.h</file>
             <file>file:/home/lander/Documents/Lixibit/Firmware/lixibit_firmware_gateway/src/app_device_custom_hid.c</file>
+            <file>file:/home/lander/Documents/Lixibit/Firmware/lixibit_firmware_gateway/src/main.c</file>
         </group>
     </open-files>
 </project-private>

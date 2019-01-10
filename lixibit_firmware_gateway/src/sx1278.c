@@ -349,6 +349,8 @@ void SX1278_transmitData(unsigned char* buf, unsigned long nodeAddr, unsigned lo
         byte_read = SX1278_readReg(REGIRQFLAGS);
     }while(!(byte_read & (VALIDHEADER | RXDONE | RXTIMEOUT)));
     
+    unsigned char tmp_irq_0 = byte_read;
+    
     // Clean buffer for received data
     memset(buf, 0, PAYLOAD_SIZE + PAYLOAD_OVERHEAD);
     
@@ -364,59 +366,51 @@ void SX1278_transmitData(unsigned char* buf, unsigned long nodeAddr, unsigned lo
             n_count++;
         }while(!(byte_read & RXDONE));
         
-        rssi_avg /= n_count;
+        // If payload has no CRC error, process information
+        if(!(byte_read & PAYLOADCRCERROR)){
         
-        // Read FIFO
-        byte_read = SX1278_readReg(REGFIFORXCURRENTADDR);
-        SX1278_writeReg(REGFIFOADDRPTR, byte_read);
-        length_rx = SX1278_readReg(REGRXNBBYTES);
-        for(i = 0; i < length_rx; i++) buf[i + 1] = SX1278_readReg(REGFIFO);
-        
-        // Node address to unsigned long
-        tmp += (unsigned long) buf[1] << 24;
-        tmp += (unsigned long) buf[2] << 16;
-        tmp += (unsigned long) buf[3] <<  8;
-        tmp += (unsigned long) buf[4] <<  0;
+            unsigned char tmp_irq_1 = byte_read;
 
-        // Check node address
-        if (tmp == gateAddr){ // Gateway address is correct
-            
-            // Read packet information
-            buf[length_rx + 1] = SX1278_readReg(REGPKTSNRVALUE);
-            buf[length_rx + 2] = SX1278_readReg(REGPKTRSSIVALUE);
-            buf[length_rx + 3] = byte_read;
-            buf[length_rx + 4] = SX1278_readReg(REGFEIMSB);
-            buf[length_rx + 5] = SX1278_readReg(REGFEIMID);
-            buf[length_rx + 6] = SX1278_readReg(REGFEILSB);
-            buf[length_rx + 7] = rssi_avg;
-            
-            // Standby mode
-            SX1278_changeMode(LONGRANGEMODE | LOWFREQUENCYMODEON | STANDBY);
-            
-//            // FEI registers to signed long
-//            fei_corr += (signed long)(buf[length_rx + 6] & 0x00FF) <<  0;
-//            fei_corr += (signed long)(buf[length_rx + 5] & 0x00FF) <<  8;
-//            fei_corr += (signed long)(buf[length_rx + 4] & 0x0007) << 16;
-//            fei_corr -= (signed long)(buf[length_rx + 4] & 0x0008) << 16;
-//
-//            // Calculate frequency and drift error
-//            freq_corr = fei_corr * (pow(2,24)/FXOSC) * (signal_bw/500.0);
-//            ppm_corr = (freq_corr / freq) * 1000000.0 * 0.95;
-//
-//            // Compensate frequency error
-//            freq -= freq_corr;
-//            tmp = (unsigned long) (freq/FSTEP);
-//            SX1278_writeReg(REGFRFMSB, (tmp >> 16) & 0xFF);
-//            SX1278_writeReg(REGFRFMID, (tmp >>  8) & 0xFF);
-//            SX1278_writeReg(REGFRFLSB, (tmp >>  0) & 0xFF);
-//
-//            // Compensate drift error
-//            tmp = (unsigned long) ppm_corr;
-//            SX1278_writeReg(REGPPMCORRECTION, tmp & 0xFF);
+            rssi_avg /= n_count;
+
+            // Read FIFO
+            byte_read = SX1278_readReg(REGFIFORXCURRENTADDR);
+            SX1278_writeReg(REGFIFOADDRPTR, byte_read);
+            length_rx = SX1278_readReg(REGRXNBBYTES);
+            for(i = 0; i < length_rx; i++) buf[i + 1] = SX1278_readReg(REGFIFO);
+
+            // Node address to unsigned long
+            tmp += (unsigned long) buf[1] << 24;
+            tmp += (unsigned long) buf[2] << 16;
+            tmp += (unsigned long) buf[3] <<  8;
+            tmp += (unsigned long) buf[4] <<  0;
+
+            // Check node address
+            if (tmp == gateAddr){ // Gateway address is correct
+
+                // Read packet information
+                buf[length_rx + 1] = SX1278_readReg(REGPKTSNRVALUE);
+                buf[length_rx + 2] = SX1278_readReg(REGPKTRSSIVALUE);
+                buf[length_rx + 3] = tmp_irq_1;
+                buf[length_rx + 4] = SX1278_readReg(REGFEIMSB);
+                buf[length_rx + 5] = SX1278_readReg(REGFEIMID);
+                buf[length_rx + 6] = SX1278_readReg(REGFEILSB);
+                buf[length_rx + 7] = rssi_avg;
+                buf[length_rx + 8] = tmp_irq_0;
+
+                // Standby mode
+                SX1278_changeMode(LONGRANGEMODE | LOWFREQUENCYMODEON | STANDBY);
+            }
+            else{  // Gateway address is not correct
+                memset(buf, 0, PAYLOAD_SIZE + PAYLOAD_OVERHEAD);
+                buf[0] = 1;
+            }
         }
-        else{  // Gateway address is not correct
+        else{  // Payload CRC error. Dump Data
             memset(buf, 0, PAYLOAD_SIZE + PAYLOAD_OVERHEAD);
-            buf[0] = 1;
+            buf[0] = 3;
+            buf[1] = byte_read;
+            buf[PAYLOAD_SIZE + PAYLOAD_OVERHEAD - 1] = SX1278_readReg(REGRSSIVALUE);
         }
     }
     // If data reception is not succeed, clean information
