@@ -426,7 +426,7 @@
 #define FSTEP           (FXOSC / 524288.0)
 
 #define GATEWAY_ADDR    0xAA55135B
-#define NODE_ADDR       0xAA55335A
+#define NODE_ADDR       0xAA55435A
 
 void SX1278_init(void);
 void SX1278_changeMode(unsigned char data);

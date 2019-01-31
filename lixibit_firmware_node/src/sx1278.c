@@ -2,9 +2,9 @@
 #include "sx1278.h"
 
 // Radio parameters
-#define signal_bw   125000      // Signal bandwidth in Hz
-#define signal_cr   8           // Coding rate in 4/X
-#define signal_sf   7           // Spreading factor in bits
+#define signal_bw   250000      // Signal bandwidth in Hz
+#define signal_cr   5           // Coding rate in 4/X
+#define signal_sf   11          // Spreading factor in bits
 #define freq        433000000.0 // Operation frequency in Hz
 
 /*********************************************************************
@@ -103,17 +103,13 @@ void SX1278_init(void){
     
     SX1278_writeReg(REGMODEMCONFIG1, (unsigned char) (BW_bits | CR_bits));
     SX1278_writeReg(REGMODEMCONFIG2, (unsigned char) (SF_bits | RXPAYLOADCRCON));
+    SX1278_writeReg(REGMODEMCONFIG3, LOWDATARATEOPTIMIZE | AGCAUTOON);
     
     byte_read = SX1278_readReg(REGMODEMCONFIG2);
     SX1278_writeReg(REGSYMBTIMEOUTLSB, (unsigned char) (byte_read | 0x00));
     SX1278_writeReg(REGSYMBTIMEOUTLSB, (unsigned char) (0xFF));
     
-    SX1278_writeReg(0x40, (unsigned char) 0xFF);
-    SX1278_writeReg(0x41, (unsigned char) 0xF0);
-    
     SX1278_writeReg(0x4B, (unsigned char) 0x09);
-    
-    SX1278_writeReg(REGPACONFIG, (unsigned char) 0x4F);
     
     tmp = (unsigned long) (freq / FSTEP);
     SX1278_writeReg(REGFRFMSB, (tmp >> 16) & 0xFF);

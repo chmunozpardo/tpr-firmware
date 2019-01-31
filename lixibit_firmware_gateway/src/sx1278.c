@@ -12,10 +12,10 @@
 #include "leds.h"
 
 // Radio parameters
+double signal_bw = 250.0;   // Signal bandwidth in kHz
+unsigned signal_cr = 5;     // Coding rate in 4/X
+unsigned signal_sf = 11;     // Spreading factor in bits
 double freq = 433000000.0;  // Operation frequency in Hz
-double signal_bw = 125.0;   // Signal bandwidth in kHz
-unsigned signal_cr = 8;     // Coding rate in 4/X
-unsigned signal_sf = 7;     // Spreading factor in bits
 
 /*********************************************************************
 * Function: void SX1278_init(void);
@@ -150,6 +150,7 @@ void SX1278_init(void){
     // Modem configuration
     SX1278_writeReg(REGMODEMCONFIG1, BW_bits | CR_bits);
     SX1278_writeReg(REGMODEMCONFIG2, SF_bits | RXPAYLOADCRCON);
+    SX1278_writeReg(REGMODEMCONFIG3, LOWDATARATEOPTIMIZE | AGCAUTOON);
     
     // RX Timeout symbols
     byte_read = SX1278_readReg(REGMODEMCONFIG2);
@@ -404,13 +405,17 @@ void SX1278_transmitData(unsigned char* buf, unsigned long nodeAddr, unsigned lo
             else{  // Gateway address is not correct
                 memset(buf, 0, PAYLOAD_SIZE + PAYLOAD_OVERHEAD);
                 buf[0] = 1;
+                // Clear flags
+                SX1278_writeReg(REGIRQFLAGS, 0xFF);
             }
         }
         else{  // Payload CRC error. Dump Data
             memset(buf, 0, PAYLOAD_SIZE + PAYLOAD_OVERHEAD);
             buf[0] = 3;
             buf[1] = byte_read;
-            buf[PAYLOAD_SIZE + PAYLOAD_OVERHEAD - 1] = SX1278_readReg(REGRSSIVALUE);
+            buf[2] = SX1278_readReg(REGRSSIVALUE);
+            // Clear flags
+            SX1278_writeReg(REGIRQFLAGS, 0xFF);
         }
     }
     // If data reception is not succeed, clean information
@@ -418,7 +423,9 @@ void SX1278_transmitData(unsigned char* buf, unsigned long nodeAddr, unsigned lo
         memset(buf, 0, PAYLOAD_SIZE + PAYLOAD_OVERHEAD);
         buf[0] = 2;
         buf[1] = byte_read;
-        buf[PAYLOAD_SIZE + PAYLOAD_OVERHEAD - 1] = SX1278_readReg(REGRSSIVALUE);
+        buf[2] = SX1278_readReg(REGRSSIVALUE);
+        // Clear flags
+        SX1278_writeReg(REGIRQFLAGS, 0xFF);
         
         // Standby mode
         SX1278_changeMode(LONGRANGEMODE | LOWFREQUENCYMODEON | STANDBY);
